@@ -19,7 +19,7 @@ install the Javascript onto your theme.
 Finally customize to your hearts content. The carousel makes some assumptions
 about how your classes are setup so take the time to setup how you see fit.
 
-###Expected Classes
+### Expected Classes
 The following classes are expected to already be defined in your stylesheets.
 
 | Class       | Use                                                                               |
@@ -29,7 +29,7 @@ The following classes are expected to already be defined in your stylesheets.
 | h1-h6       | All typography, particularly headings, are exected to be styled                   |
 | .title      | While this is styled in the carousel.scss, I suggest styling to match your theme. |
 
-###Included Classes
+### Included Classes
 The carousel comes with a few useful classes that you may want to reuse in your
 theme to save on double-dipping, and to avoid bloating.
 
@@ -41,4 +41,4 @@ theme to save on double-dipping, and to avoid bloating.
 ### TODO
 Not much at this moment, I wouldn't mind improving the Theme Editor logic since it's a bit iffy, and also the Content Box is not ideal but works for now.
 
-Any requests feel free to contact or raise an issue, happy coding!
+Any requests feel free to contact or raise an issue, happy coding! 

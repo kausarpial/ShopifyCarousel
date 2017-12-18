@@ -1,0 +1,359 @@
+{%comment%}
+  Copyright (C) 2017 Dominic Masters
+
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+{%endcomment%}
+
+<style type="text/css">
+  {%-for block in section.blocks-%}
+    .slide--{{block.id}} { background: {{ block.settings.bg }}; }
+    {%-if block.settings.image-%}
+      .slide--{{block.id}} .image {
+        background-image: url('{{ block.settings.image|img_url: '1200x1200', scale:'2x' }}');
+        background-size: {{block.settings.background_size}};
+        background-position: {{block.settings.background_position}};
+        {%-if block.settings.background_size == 'CONTAIN' -%}
+          background-repeat: repeat;
+        {%-else-%}
+          background-repeat: no-repeat;
+        {%-endif-%}
+      }
+    {%-endif-%}
+
+    {%-if block.settings.text_color -%}
+      .slide--{{block.id}} .title {
+        color: {{block.settings.text_color}};
+      }
+    {%- endif -%}
+
+    {%-if block.settings.custom_button-%}
+      .slide--{{block.id}} .btn {
+        background: {{block.settings.button_color}};
+        color: {{block.settings.button_text_color}};
+      }
+      .slide--{{block.id}} .btn:hover {
+        background: {{block.settings.button_hover_color}};
+        color: {{block.settings.button_hover_label_color}};
+      }
+    {%-endif-%}
+  {%-endfor-%}
+</style>
+
+<div class="carousel-inner carousel--{{section.id}}" id="carousel--{{section.id}}">
+  {%-for block in section.blocks-%}
+    {%comment%}
+      Slide Code
+    {%endcomment%}
+    {%- if block.settings.slide_clickable -%}
+      <a href="{{block.settings.href}}" class="item slide--{{block.id}}" data-index="{{forloop.index0}}" {{block.shopify_attributes}} >
+    {%-else-%}
+      <div class="item slide--{{block.id}}" {{block.shopify_attributes}} data-index="{{forloop.index0}}" >
+    {%-endif-%}
+
+      <div class="box-sizer {{section.settings.carousel_ratio}}">
+        {%comment%}
+          This element is used to force size the parent carousel regardless of the image.
+          Refer to carousel.scss for more detail.
+        {%endcomment%}
+
+        {%comment%}
+          Slide Image
+        {%endcomment%}
+        {%if block.settings.image %}
+          <div class="image"></div>
+        {%endif%}
+      </div>
+
+      {%comment%}
+        Now the Label and button box
+      {%endcomment%}
+      <div class="content-box size-{{block.settings.box_size}} {{block.settings.content_position}}">
+        {%-if block.settings.title-%}
+          <h1 class="title">{{block.settings.title}}</h1>
+        {%-endif-%}
+
+        {%-if block.settings.button_label and block.settings.href and block.settings.enable_button-%}
+          {%- if block.settings.slide_clickable -%}
+            <div class="btn btn-custom">{{block.settings.button_label}}</div>
+          {%-else-%}
+            <a class="btn btn-custom" href="{{block.settings.href}}">
+              {{block.settings.button_label}}
+            </a>
+          {%-endif-%}
+        {%-endif-%}
+      </div>
+
+    {%- if block.settings.slide_clickable -%}
+      </a>
+    {%-else-%}
+      </div>
+    {%-endif-%}
+  {%-endfor-%}
+</div>
+
+{%comment%}
+  Customize your JS Options here, keep in mind that these changes will affect
+  all carousels on the page!
+
+  We also track our carousels in the window.carousels variable...
+
+  TODO: Track the carousels that get unloaded
+{%endcomment%}
+<script type="text/javascript">
+  window.carousels = window.carousels || {};
+  window.carousels['{{section.id}}'] = function() {
+    $(".carousel--{{section.id}}").slick({
+      infinite: {{section.settings.infinite}},
+      slidesToShow: 1,
+      slidesToScroll: 1,
+      autoplay: {{section.settings.autoplay}},
+      dots: {{section.settings.show_dots}},
+      adaptiveHeight: true,
+      autoplaySpeed: {{section.settings.autplay_speed | times: 1000}},
+      cssEase: 'cubic-bezier(0.23, 1, 0.32, 1)'
+    });
+  };
+  window.carousels['{{section.id}}']();
+</script>
+
+{% schema %}
+  {
+    "name": "Carousel",
+    "class": "carousel",
+    "settings": [
+      {
+        "id": "show_arrows",
+        "type": "checkbox",
+        "label": "Show Carousel Arrows",
+        "default": false
+      },
+      {
+        "id": "show_dots",
+        "type": "checkbox",
+        "label": "Show Carousel Dots",
+        "default": false
+      },
+      {
+        "id": "infinite",
+        "type": "checkbox",
+        "label": "Infinite Carousel",
+        "default": true
+      },
+      {
+        "id": "autoplay",
+        "type": "checkbox",
+        "label": "Autoplay",
+        "default": false
+      },
+      {
+        "id": "autoplay_speed",
+        "type": "range",
+        "min": 1,
+        "max": 20,
+        "label": "Autoplay Speed",
+        "default": 3
+      },
+      {
+        "type": "select",
+        "id": "carousel_ratio",
+        "label": "Carousel Size Ratio",
+        "options": [
+          {"value": "one-by-one", "label": "1:1 - Square"},
+          {"value": "two-by-one", "label": "2:1 - Half Height"},
+          {"value": "three-by-one", "label": "3:1 - 1/3rd Height"},
+          {"value": "three-by-two", "label": "3:2 - 2/3rds Height"},
+          {"value": "three-by-four", "label": "3:4 - Square TV"},
+          {"value": "sixteen-by-none", "label": "16:9 - Widescreen"},
+          {"value": "nine-by-sixteen", "label": "9:16 - Vertical Widescreen"},
+          {"value": "four-sevenths", "label": "4:7"}
+        ],
+        "default": "two-by-one"
+      }
+    ],
+    "blocks": [
+      {
+        "type": "image",
+        "name": "Slide",
+        "settings": [
+          {
+            "type": "select",
+            "id": "box_size",
+              "label": "Title Size",
+            "options": [
+              {"value": "small", "label": "Small"},
+              {"value": "medium", "label": "Medium"},
+              {"value": "large", "label": "Large"}
+            ]
+          },
+          {
+            "type": "select",
+            "id": "content_position",
+            "label": "Content Position",
+            "options": [
+              {"value": "left top", "label": "Top Left"},
+              {"value": "center top", "label": "Top Middle"},
+              {"value": "right top", "label": "Top Right"},
+              {"value": "left middle", "label": "Middle Left"},
+              {"value": "center middle", "label": "Center"},
+              {"value": "right middle", "label": "Middle Right"},
+              {"value": "left bottom", "label": "Bottom Left"},
+              {"value": "center bottom", "label": "Bottom Middle"},
+              {"value": "right bottom", "label": "Bottom Right"}
+            ],
+            "default": "center middle"
+          },
+          {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "Hello World!"
+          },
+          {
+            "type": "header",
+            "content": "Button Settings"
+          },
+          {
+            "type": "checkbox",
+            "label": "Slide Clickable",
+            "info": "If checked the entire slide (image and text) can be clicked, otherwise only the button can be clicked.",
+            "default": true,
+            "id": "slide_clickable"
+          },
+          {
+            "type": "url",
+            "id": "href",
+            "label": "Link"
+          },
+          {
+            "type": "checkbox",
+            "id": "enable_button",
+            "label": "Enable Button",
+            "default": true
+          },
+          {
+            "type": "text",
+            "id": "button_label",
+            "label": "Button Label",
+            "default": "Click here"
+          },
+          {
+            "type": "checkbox",
+            "id": "custom_button",
+            "label": "Enable Custom Button Colors (options below)",
+            "default": false
+          },
+          {
+            "type": "color",
+            "id": "button_color",
+            "label": "Button Color",
+            "default": "#000000"
+          },
+          {
+            "type": "color",
+            "id": "button_text_color",
+            "default": "#FFFFFF",
+            "label": "Button Text Color"
+          },
+          {
+            "id": "button_hover_color",
+            "label": "Button Hover Color",
+            "type": "color",
+            "default": "#B44BDC"
+          },
+          {
+            "id": "button_hover_label_color",
+            "label": "Button Hover Label Color",
+            "type": "color"
+          },
+
+          {
+            "type": "header",
+            "content": "Background/Image Settings"
+          },
+          {
+            "type": "color",
+            "id": "bg",
+            "label": "Background Color",
+            "default": "#FFFFFF"
+          },
+          {
+            "type": "color",
+            "id": "text_color",
+            "label": "Font Color",
+            "default": "#000000"
+          },
+          {
+            "type": "select",
+            "id": "background_size",
+            "label": "Image Size (Affects Tablets and Computers Only)",
+            "options": [
+              {"value": "contain", "label": "Contain"},
+              {"value": "cover", "label": "Cover"},
+              {"value": "CONTAIN", "label": "Tessellate"}
+            ]
+          },
+          {
+            "type": "select",
+            "id": "background_position",
+            "label": "Image Position",
+            "options": [
+              {"value": "left top", "label": "Top Left"},
+              {"value": "center top", "label": "Top Middle"},
+              {"value": "right top", "label": "Top Right"},
+              {"value": "left center", "label": "Middle Left"},
+              {"value": "center", "label": "Center"},
+              {"value": "right center", "label": "Middle Right"},
+              {"value": "left bottom", "label": "Bottom Left"},
+              {"value": "center bottom", "label": "Bottom Middle"},
+              {"value": "right bottom", "label": "Bottom Right"}
+            ],
+            "default": "center"
+          },
+          {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Slide Image"
+          }
+        ]
+      }
+    ],
+    "presets": [
+      {
+        "name": "Carousel",
+        "category": "Layout"
+      }
+    ]
+  }
+{% endschema %}
+
+{%javascript%}
+  var slide = 0;
+
+  function onSliderSectionAdjust(a) {
+    if(!a) return;
+    window.sliders = window.sliders || {};
+    window.sliders[a.detail.sectionId]();
+    $('.slider--'+a.detail.sectionId).slick('slickGoTo', slide);
+  }
+  function onSliderBlockAdjust(a) {
+    if(!a) return;
+    var block = $('.slide--'+a.detail.blockId);
+    slide = parseInt(block.attr("data-index"));
+    $('.slider--'+a.detail.sectionId).slick('slickGoTo', slide);
+  }
+
+  $(document).on('shopify:section:load', '.carousel', onSliderSectionAdjust);
+  $(document).on('shopify:section:select', '.carousel', onSliderSectionAdjust);
+  $(document).on('shopify:section:reorder', '.carousel', onSliderSectionAdjust);
+  $(document).on('shopify:block:select', '.carousel', onSliderBlockAdjust);
+{%endjavascript%}

@@ -1,0 +1,214 @@
+/*
+ *
+ * Copyright (C) 2017 Dominic Masters
+ * 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+//============================================================================//
+//                              Carousel Classes                              //
+//============================================================================//
+.carousel {
+  max-width: 100%;
+  overflow: hidden;
+
+  .item {
+    position: relative;
+    display:block;//Incase it's an anchor element
+
+    .box-sizer {
+      //Fixes the carousel to a set size, regardless of the image inside it.
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+
+      > .image {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        position: absolute;
+        background-size: cover;
+        background-position: right center;
+        background-repeat: no-repeat;
+      }
+    }
+  }
+}
+
+ 
+//============================================================================//
+//                               Helper Classes                               //
+//============================================================================//
+
+/*
+ * Box Sizer Utility Class, you can override this with your own way of sizing 
+ * The slides.
+ *
+ * Most likely one day this will have its own repo as well, since I tend to use
+ * these helpers a fair bit
+ */
+$baseSize: 100%;
+
+.box-sizer {
+  width: $baseSize;
+
+  &.square,
+  &.box,
+  &.one-by-one
+  {padding-bottom: $baseSize * 1.0;}
+
+  &.one-by-one-half,
+  &.two-by-one
+  {padding-bottom: $baseSize * 0.5;}
+
+  &.three-by-one,
+  &.one-by-one-third
+  {padding-bottom: $baseSize / 3;}
+
+  &.one-by-two-thirds,
+  &.three-by-two
+  {padding-bottom: ( $baseSize / 3 ) * 2;}
+
+  &.three-by-four,
+  &.three-quarters,
+  &.seven-tenths
+  {padding-bottom: ($baseSize / 4)*3;}
+
+  &.sixteen-by-nine,
+  &.widescreen
+  {padding-bottom: ($baseSize / 16) * 9;}
+
+  &.nine-by-sixteen,
+  &.vertical-widescreen,
+  &.mobile
+  {padding-bottom: ($baseSize / 9) * 16;}
+
+  &.four-sevenths
+  {padding-bottom: ($baseSize / 7) * 4;}
+
+  &.six-by-one,
+  &.one-by-one-sixth
+  {padding-bottom: $baseSize / 6;}
+}
+
+
+/*
+ * Content Box Helper Class
+ *
+ * You will probably want to heavily modify this, again this will likely become
+ * its own repo one day since I use it a fair bit.
+ */
+$content-inset: 5%;
+
+.content-box {
+  text-align: center;
+
+  .title {
+    margin: 0 0 0.3em;
+    padding: 0 0.3em;
+  }
+
+  p {
+    margin-bottom: 1em;
+  }
+
+  .btn {
+    padding: 0.9em 2em;
+  }
+
+  &.size-small {
+    .title {font-size: 3.5em;}
+  }
+
+  &.size-medium {
+    .title {font-size: 4em;}
+  }
+
+  &.size-large {
+    max-width: 90%;
+    p {font-size: 1.5em;}
+    .title {font-size: 5em;}
+    .btn {font-size: 1.8em;}
+  }
+
+  @include media-query($large-up) {
+    &.size-small {
+      .title {font-size: 3.5em;}
+    }
+
+    &.size-medium {
+      p {font-size: 1.25em;}
+      .title {font-size: 5.25em;}
+      .btn {font-size: 1.3em;}
+    }
+
+    &.size-large {
+      p {font-size: 1.5em;}
+      .title {font-size: 6.5em;}
+      .btn {font-size: 1.8em;}
+    }
+  }
+
+  @include media-query($medium-up) {
+    position: absolute;
+
+    &.size-small {width: 33%;}
+    &.size-medium {width: 66%;}
+
+    &.top {top: $content-inset;}
+    &.middle {
+      top: 50%;
+      @include transform(translateY(-50%));
+    }
+    &.bottom {bottom: $content-inset;}
+    &.left {left: $content-inset;}
+    &.center {
+      left:50%;
+      @include transform(translateX(-50%));
+      text-align: center;
+    }
+    &.right {right: $content-inset;}
+    &.middle.center {@include transform(translate(-50%,-50%));}
+  }
+
+  @include media-query($medium-down) {
+    padding-top: 2em;
+    padding-bottom: 3em;
+
+    &.size-small {width: 75%;}
+    &.size-medium {width: 90%;}
+  }
+
+  @include media-query($small) {
+    &.size-small,&.size-medium,&.size-large {
+      width: 96%;
+      margin: 2%;
+    }
+
+    &:not(.dont-stack) {
+        p {
+            olor: $color_body_text !important;
+        }
+    }
+
+    &.dont-stack {
+      position: absolute;
+      left: 5%;
+      top: 0;
+      width: 90%;
+      height: 100%;
+      overflow: hidden;
+    }
+  }
+}
